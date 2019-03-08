@@ -1,12 +1,22 @@
-#ifndef SettingsModel_h
-#define SettingsModel_h
+#pragma once
 
-struct WeldSettings {
-      int eepromVersion;
-      int pulseCount;
-      int pulseDuration;
-      int pulseInterval;
-      int pulsePower;
-    };
+struct WeldSettings 
+{
+  int pulseCount, pulseDuration, pulseInterval, pulsePower;
+};
 
-#endif
+bool operator==(const WeldSettings &lhs, const WeldSettings &rhs)
+{
+    return (lhs.pulseCount == rhs.pulseCount && 
+            lhs.pulseDuration == rhs.pulseDuration &&
+            lhs.pulseInterval == rhs.pulseInterval &&
+            lhs.pulsePower == rhs.pulsePower);
+}
+
+bool operator!=(const WeldSettings &lhs, const WeldSettings &rhs)
+{
+    return (lhs.pulseCount != rhs.pulseCount ||
+            lhs.pulseDuration != rhs.pulseDuration ||
+            lhs.pulseInterval != rhs.pulseInterval ||
+            lhs.pulsePower != rhs.pulsePower);
+}

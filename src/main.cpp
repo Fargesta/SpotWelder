@@ -9,7 +9,7 @@
 #define WELDBUTTONPIN 4   //Welding button pin
 #define RELAYBUTTONPIN 11 //SSR pin
 
-WelderDisplay wd;
+DisplayService displayServive;
 LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 bool isWelding = false;
 bool isInterval = false;
@@ -56,7 +56,7 @@ void setup()
   lcd.setCursor(0,1);
   lcd.print("Loading...");
   delay(700);
-  wd.Begin(lcd);
+  displayServive.Begin(lcd);
 }
 
 //Interrupt Service Routines

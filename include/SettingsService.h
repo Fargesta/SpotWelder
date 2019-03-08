@@ -1,5 +1,5 @@
-#ifndef SettingsService_h
-#define SettingsService_h
+#pragma once
+
 #include "Arduino.h"
 #include <EEPROM.h>
 #include "SettingsModel.h"
@@ -12,5 +12,3 @@ class SettingsService
     WeldSettings GetSettings();
     void SaveSettings(WeldSettings settings);
 };
-
-#endif

@@ -1,5 +1,5 @@
-#ifndef DisplayService_h
-#define DisplayService_h
+#pragma once
+
 #include "Arduino.h"
 #include "SettingsService.h"
 #include "SettingsModel.h"
@@ -26,4 +26,3 @@ class DisplayService
     void ButtonUp(LiquidCrystal_I2C lcd);
     void ButtonDown(LiquidCrystal_I2C lcd);
 };
-#endif
