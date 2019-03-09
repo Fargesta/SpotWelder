@@ -2,7 +2,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "DisplayService.h"
-#include "SettingsService.h"
 
 #define DETECT 2          //zero cross detect
 #define GATE 3            //TRIAC gate
@@ -16,6 +15,25 @@ bool isWelding = false;
 bool isInterval = false;
 unsigned long prevMillis = 0;
 int curPulse = 0;
+
+//Interrupt Service Routines
+void zeroCrossingInterrupt()
+{ //zero cross detect   
+  TCCR1B=0x04; //start timer with divide by 256 input
+  TCNT1 = 0;   //reset timer - count from zero
+}
+
+ISR(TIMER1_COMPA_vect)
+{                           //comparator match
+  digitalWrite(GATE,HIGH);  //set TRIAC gate to high
+  TCNT1 = 65536-PULSE;      //trigger pulse width
+}
+
+ISR(TIMER1_OVF_vect)
+{                         //timer1 overflow
+  digitalWrite(GATE,LOW); //turn off TRIAC gate
+  TCCR1B = 0x00;          //disable timer stopd unintended triggers
+}
 
 void setup()
 {
@@ -35,7 +53,7 @@ void setup()
   TCCR1B = 0x00;    //normal operation, timer disabled
 
   // set up zero crossing interrupt
-  attachInterrupt(0,zeroCrossingInterrupt, RISING);    
+  attachInterrupt(0, zeroCrossingInterrupt, RISING);    
   //IRQ0 is pin 2. Call zeroCrossingInterrupt 
   //on rising signal
 
@@ -59,25 +77,6 @@ void setup()
   delay(700);
 
   displayService.LoadSettings(settingsService.EepromSettings);
-}
-
-//Interrupt Service Routines
-void zeroCrossingInterrupt()
-{ //zero cross detect   
-  TCCR1B=0x04; //start timer with divide by 256 input
-  TCNT1 = 0;   //reset timer - count from zero
-}
-
-ISR(TIMER1_COMPA_vect)
-{                           //comparator match
-  digitalWrite(GATE,HIGH);  //set TRIAC gate to high
-  TCNT1 = 65536-PULSE;      //trigger pulse width
-}
-
-ISR(TIMER1_OVF_vect)
-{                         //timer1 overflow
-  digitalWrite(GATE,LOW); //turn off TRIAC gate
-  TCCR1B = 0x00;          //disable timer stopd unintended triggers
 }
 
 void loop()

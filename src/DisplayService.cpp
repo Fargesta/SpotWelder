@@ -17,8 +17,6 @@ const int btnLeft = 18;
 const int btnRight = 31;
 const int btnCenter = 5;
 
-SettingsService settingsService;
-
 void DisplayService::OnPress(int value)
 {
   if(eepromSettings != nullptr)
