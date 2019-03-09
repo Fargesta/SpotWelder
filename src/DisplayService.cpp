@@ -1,4 +1,7 @@
 #include "DisplayService.h"
+#include <LiquidCrystal_I2C.h>
+#include "SettingsModel.h"
+
 
 const int deviation = 5; // capturing button resistance with deviation
 
@@ -15,162 +18,180 @@ const int btnRight = 31;
 const int btnCenter = 5;
 
 SettingsService settingsService;
-WeldSettings eepromSettings;
 
-DisplayService::DisplayService()
+void DisplayService::OnPress(int value)
 {
-  eepromSettings = settingsService.GetSettings();
-}
+  if(eepromSettings != nullptr)
+  {
+    return;
+  }
 
-void DisplayService::OnPress(int value, LiquidCrystal_I2C lcd)
-{
   if(value > btnCenter - deviation && value < btnCenter + deviation)
   {
-    ButtonCenter(lcd);
+    ButtonCenter();
     return;
   }
   if(value > btnUp - deviation && value < btnUp + deviation)
   {
-    ButtonUp(lcd);
+    ButtonUp();
     return;
   }
   if(value > btnDown - deviation && value < btnDown + deviation)
   {
-    ButtonDown(lcd);
+    ButtonDown();
     return;
   }
   if(value > btnLeft - deviation && value < btnLeft + deviation)
   {
-    ButtonLeft(lcd);
+    ButtonLeft();
     return;
   }
   if(value > btnRight - deviation && value < btnRight + deviation)
   {
-    ButtonRight(lcd);
+    ButtonRight();
     return;
   }
 }
 
-void DisplayService::Begin(LiquidCrystal_I2C lcd)
+void DisplayService::LoadSettings(WeldSettings *settings)
 {
+  if(settings == nullptr)
+  {
+    return;
+  }
+  eepromSettings = settings;
+
    //Show menu
   
-  lcd.clear();
-  lcd.print("Count    "); lcd.print(eepromSettings.pulseCount);
+  LiquidCrystal_I2C::clear();
+  LiquidCrystal_I2C::print("Count    ");
+  LiquidCrystal_I2C::print(eepromSettings->pulseCount);
   
-  lcd.setCursor(0,1);
-  lcd.print("Duration "); lcd.print(eepromSettings.pulseDuration); lcd.print("ms");
+  LiquidCrystal_I2C::setCursor(0,1);
+  LiquidCrystal_I2C::print("Duration ");
+  LiquidCrystal_I2C::print(eepromSettings->pulseDuration);
+  LiquidCrystal_I2C::print("ms");
   
-  lcd.setCursor(0,2);
-  lcd.print("Interval "); lcd.print(eepromSettings.pulseInterval); lcd.print("ms");
+  LiquidCrystal_I2C::setCursor(0,2);
+  LiquidCrystal_I2C::print("Interval ");
+  LiquidCrystal_I2C::print(eepromSettings->pulseInterval);
+  LiquidCrystal_I2C::print("ms");
   
-  lcd.setCursor(0,3);
-  lcd.print("Power    "); lcd.print(eepromSettings.pulsePower); lcd.print("%");
+  LiquidCrystal_I2C::setCursor(0,3);
+  LiquidCrystal_I2C::print("Power    ");
+  LiquidCrystal_I2C::print(eepromSettings->pulsePower);
+  LiquidCrystal_I2C::print("%");
 }
 
-void DisplayService::ButtonCenter(LiquidCrystal_I2C lcd)
+void DisplayService::ButtonCenter()
 {
   if(settingIndex < 0)
   {
     settingIndex = 0;
-    lcd.setCursor(settingsArrowColumn, settingIndex);
-    lcd.print("<<<<<");
+    LiquidCrystal_I2C::setCursor(settingsArrowColumn, settingIndex);
+    LiquidCrystal_I2C::print("<<<<<");
   }
   else
   {
-    lcd.setCursor(settingsArrowColumn, settingIndex);
-    lcd.print("     ");
+    LiquidCrystal_I2C::setCursor(settingsArrowColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");
     settingIndex = -1;
   }
 }
 
-void DisplayService::ButtonUp(LiquidCrystal_I2C lcd)
+void DisplayService::ButtonUp()
 {
-  lcd.setCursor(settingsArrowColumn, settingIndex);
-  lcd.print("     ");
+  LiquidCrystal_I2C::setCursor(settingsArrowColumn, settingIndex);
+  LiquidCrystal_I2C::print("     ");
   settingIndex < 1 ? settingIndex = 3 : settingIndex--;
-  lcd.setCursor(settingsArrowColumn, settingIndex);
-  lcd.print("<<<<<");
+  LiquidCrystal_I2C::setCursor(settingsArrowColumn, settingIndex);
+  LiquidCrystal_I2C::print("<<<<<");
 }
 
-void DisplayService::ButtonDown(LiquidCrystal_I2C lcd)
+void DisplayService::ButtonDown()
 {
-  lcd.setCursor(settingsArrowColumn, settingIndex);
-  lcd.print("     ");      
+  LiquidCrystal_I2C::setCursor(settingsArrowColumn, settingIndex);
+  LiquidCrystal_I2C::print("     ");      
   settingIndex > 2 ? settingIndex = 0 : settingIndex++;
-  lcd.setCursor(settingsArrowColumn, settingIndex);
-  lcd.print("<<<<<");
+  LiquidCrystal_I2C::setCursor(settingsArrowColumn, settingIndex);
+  LiquidCrystal_I2C::print("<<<<<");
 }
 
-void DisplayService::ButtonRight(LiquidCrystal_I2C lcd)
+void DisplayService::ButtonRight()
 {
   if (settingIndex == 0)
   {
-    eepromSettings.pulseCount > 4 ? eepromSettings.pulseCount = 0 : eepromSettings.pulseCount++;
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print("     ");      
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print(eepromSettings.pulseCount);
+    eepromSettings->pulseCount > 4 ? eepromSettings->pulseCount = 0 : eepromSettings->pulseCount++;
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");      
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print(eepromSettings->pulseCount);
   }
   else if (settingIndex == 1)
   {
-    eepromSettings.pulseDuration > 199 ? eepromSettings.pulseDuration = 20 : eepromSettings.pulseDuration++;
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print("     ");      
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print(eepromSettings.pulseDuration); lcd.print("ms");
+    eepromSettings->pulseDuration > 199 ? eepromSettings->pulseDuration = 20 : eepromSettings->pulseDuration++;
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");      
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print(eepromSettings->pulseDuration);
+    LiquidCrystal_I2C::print("ms");
   }
   else if (settingIndex == 2)
   {
-    eepromSettings.pulseInterval > 998 ? eepromSettings.pulseInterval = 20 : eepromSettings.pulseInterval++;
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print("     ");      
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print(eepromSettings.pulseInterval); lcd.print("ms");
+    eepromSettings->pulseInterval > 998 ? eepromSettings->pulseInterval = 20 : eepromSettings->pulseInterval++;
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");      
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print(eepromSettings->pulseInterval);
+    LiquidCrystal_I2C::print("ms");
   }
   else if (settingIndex == 3)
   {
-    eepromSettings.pulsePower > 99 ? eepromSettings.pulsePower = 0 : eepromSettings.pulsePower++;
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print("     ");      
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print(eepromSettings.pulsePower); lcd.print("%");
+    eepromSettings->pulsePower > 99 ? eepromSettings->pulsePower = 0 : eepromSettings->pulsePower++;
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");      
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print(eepromSettings->pulsePower);
+    LiquidCrystal_I2C::print("%");
   }
 }
 
-void DisplayService::ButtonLeft(LiquidCrystal_I2C lcd)
+void DisplayService::ButtonLeft()
 {
   if (settingIndex == 0)
   {
-    eepromSettings.pulseCount < 1 ? eepromSettings.pulseCount = 5 : eepromSettings.pulseCount--;
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print("     ");      
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print(eepromSettings.pulseCount);
+    eepromSettings->pulseCount < 1 ? eepromSettings->pulseCount = 5 : eepromSettings->pulseCount--;
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");      
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print(eepromSettings->pulseCount);
   }
   else if (settingIndex == 1)
   {
-    eepromSettings.pulseDuration < 21 ? eepromSettings.pulseDuration = 200 : eepromSettings.pulseDuration--;
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print("     ");      
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print(eepromSettings.pulseDuration); lcd.print("ms");
+    eepromSettings->pulseDuration < 21 ? eepromSettings->pulseDuration = 200 : eepromSettings->pulseDuration--;
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");      
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print(eepromSettings->pulseDuration);
+    LiquidCrystal_I2C::print("ms");
   }
   else if (settingIndex == 2)
   {
-    eepromSettings.pulseInterval < 21 ? eepromSettings.pulseInterval = 999 : eepromSettings.pulseInterval--;
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print("     ");      
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print(eepromSettings.pulseInterval); lcd.print("ms");
+    eepromSettings->pulseInterval < 21 ? eepromSettings->pulseInterval = 999 : eepromSettings->pulseInterval--;
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");      
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print(eepromSettings->pulseInterval);
+    LiquidCrystal_I2C::print("ms");
   }
   else if (settingIndex == 3)
   {
-    eepromSettings.pulsePower < 1 ? eepromSettings.pulsePower = 100 : eepromSettings.pulsePower--;
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print("     ");      
-    lcd.setCursor(settingsValueColumn, settingIndex);
-    lcd.print(eepromSettings.pulsePower); lcd.print("%");
+    eepromSettings->pulsePower < 1 ? eepromSettings->pulsePower = 100 : eepromSettings->pulsePower--;
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print("     ");      
+    LiquidCrystal_I2C::setCursor(settingsValueColumn, settingIndex);
+    LiquidCrystal_I2C::print(eepromSettings->pulsePower);
+    LiquidCrystal_I2C::print("%");
   }
 }
 

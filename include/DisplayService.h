@@ -1,28 +1,24 @@
 #pragma once
 
-#include "Arduino.h"
 #include "SettingsService.h"
 #include "SettingsModel.h"
 #include <LiquidCrystal_I2C.h>
 
-class DisplayService
+class DisplayService : public LiquidCrystal_I2C
 {
+  WeldSettings *eepromSettings;
+
+  void ButtonCenter();
+  void ButtonLeft();
+  void ButtonRight();
+  void ButtonUp();
+  void ButtonDown();
+
   public:
-    DisplayService();
-            
-    void OnPress(int value, LiquidCrystal_I2C lcd);
+    DisplayService() : LiquidCrystal_I2C (0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE) { eepromSettings = nullptr; }
+
+    void OnPress(int value);
     void ConfigureButtons();
-    void Begin(LiquidCrystal_I2C lcd);
-    void SetCursor(int x, int y);
-    void Print(String text);
-    void Clear();
-
+    void LoadSettings(WeldSettings *settings);
     ~DisplayService();
-
-  private:
-    void ButtonCenter(LiquidCrystal_I2C lcd);
-    void ButtonLeft(LiquidCrystal_I2C lcd);
-    void ButtonRight(LiquidCrystal_I2C lcd);
-    void ButtonUp(LiquidCrystal_I2C lcd);
-    void ButtonDown(LiquidCrystal_I2C lcd);
 };

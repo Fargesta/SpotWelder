@@ -9,6 +9,6 @@ class SettingsService
   public:
     SettingsService();
     
-    WeldSettings GetSettings();
-    void SaveSettings(WeldSettings settings);
+    WeldSettings *EepromSettings;
+    void SaveSettings();
 };

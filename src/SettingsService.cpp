@@ -1,30 +1,30 @@
 #include "SettingsService.h"
 const int settingsAddr = 0; // EEPROM memory adderss
-WeldSettings eepromSettings = {2, 35, 100, 90};
+WeldSettings defaultSettings = {2, 35, 100, 90};
+WeldSettings currentSettings = {0, 0, 0, 0};
 
 SettingsService::SettingsService()
 {
+  EepromSettings = nullptr;
   WeldSettings getTmp;
   EEPROM.get(settingsAddr, getTmp);
-  if(eepromSettings == getTmp)
+  if(defaultSettings == getTmp)
   {
-    eepromSettings = getTmp;
+    defaultSettings = getTmp;
   }
   else
   {
-    EEPROM.put(settingsAddr, eepromSettings); // put default if no settings found
+    EEPROM.put(settingsAddr, defaultSettings); // put default if no settings found
   }
+
+  currentSettings = defaultSettings;
+  EepromSettings = &currentSettings;
 }
 
-WeldSettings SettingsService::GetSettings()
+void SettingsService::SaveSettings()
 {
-  return eepromSettings;
-}
-
-void SettingsService::SaveSettings(WeldSettings settings)
-{
-  if(settings != eepromSettings)
+  if(defaultSettings != currentSettings)
   {
-  EEPROM.put(settingsAddr, settings);  
+    EEPROM.put(settingsAddr, currentSettings);  
   }
 }

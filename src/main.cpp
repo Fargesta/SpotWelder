@@ -1,7 +1,8 @@
 #include <Wire.h>
-#include "DisplayService.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "DisplayService.h"
+#include "SettingsService.h"
 
 #define DETECT 2          //zero cross detect
 #define GATE 3            //TRIAC gate
@@ -9,8 +10,8 @@
 #define WELDBUTTONPIN 4   //Welding button pin
 #define RELAYBUTTONPIN 11 //SSR pin
 
-DisplayService displayServive;
-LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
+DisplayService displayService;
+SettingsService settingsService;
 bool isWelding = false;
 bool isInterval = false;
 unsigned long prevMillis = 0;
@@ -38,25 +39,26 @@ void setup()
   //IRQ0 is pin 2. Call zeroCrossingInterrupt 
   //on rising signal
 
-  lcd.begin(20,4);
+  displayService.begin(20,4);
 
   //Load screen
-  lcd.backlight();
-  lcd.home();
-  lcd.print("Evgeny's spot welder");
-  lcd.setCursor(0,1);
-  lcd.print("Loading");
+  displayService.backlight();
+  displayService.home();
+  displayService.print("Evgeny's spot welder");
+  displayService.setCursor(0,1);
+  displayService.print("Loading");
   delay(700);  
-  lcd.setCursor(0,1);
-  lcd.print("Loading.");
+  displayService.setCursor(0,1);
+  displayService.print("Loading.");
   delay(700);
-  lcd.setCursor(0,1);
-  lcd.print("Loading..");
+  displayService.setCursor(0,1);
+  displayService.print("Loading..");
   delay(700);
-  lcd.setCursor(0,1);
-  lcd.print("Loading...");
+  displayService.setCursor(0,1);
+  displayService.print("Loading...");
   delay(700);
-  displayServive.Begin(lcd);
+
+  displayService.LoadSettings(settingsService.EepromSettings);
 }
 
 //Interrupt Service Routines
@@ -80,8 +82,7 @@ ISR(TIMER1_OVF_vect)
 
 void loop()
 {
-  Settings settings = wd.GetSettings();
-  OCR1A = 625 * settings.pulsePower / 100;
+  OCR1A = 625 * settingsService.EepromSettings->pulsePower / 100;
   int menuButton = analogRead(A0);
   int weldButton = digitalRead(WELDBUTTONPIN);
   unsigned long curMillis = millis();
@@ -96,13 +97,13 @@ void loop()
 
   if(isWelding)
   {
-    if(curPulse < settings.pulseCount)
+    if(curPulse < settingsService.EepromSettings->pulseCount)
     {
       int diff = curMillis - prevMillis;
       if(!isInterval)
       {
         digitalWrite(RELAYBUTTONPIN, HIGH);
-        if(diff > settings.pulseDuration)
+        if(diff > settingsService.EepromSettings->pulseDuration)
         {
           Serial.println("Welding");
           digitalWrite(RELAYBUTTONPIN, LOW);
@@ -112,7 +113,7 @@ void loop()
       } 
       else
       {
-        if(diff > settings.pulseDuration + settings.pulseInterval)
+        if(diff > settingsService.EepromSettings->pulseDuration + settingsService.EepromSettings->pulseInterval)
         {
           isInterval = false;
           prevMillis = curMillis;
@@ -129,7 +130,7 @@ void loop()
     if(menuButton < 100)
     {
       delay(200);
-      wd.OnPress(menuButton, lcd);
+      displayService.OnPress(menuButton);
     }
   }
 }
