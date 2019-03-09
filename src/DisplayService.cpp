@@ -19,7 +19,7 @@ const int btnCenter = 5;
 
 void DisplayService::OnPress(int value)
 {
-  if(eepromSettings != nullptr)
+  if(eepromSettings == nullptr)
   {
     return;
   }

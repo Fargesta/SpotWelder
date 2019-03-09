@@ -37,8 +37,6 @@ ISR(TIMER1_OVF_vect)
 
 void setup()
 {
-  Serial.begin(9600);
-  
   pinMode(DETECT, INPUT);     //zero cross detect
   digitalWrite(DETECT, HIGH); //enable pull-up resistor
   pinMode(GATE, OUTPUT);      //TRIAC gate control
