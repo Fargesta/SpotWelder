@@ -1,6 +1,6 @@
 #include "SettingsService.h"
 const int settingsAddr = 0; // EEPROM memory adderss
-WeldSettings defaultSettings = {2, 35, 100, 90};
+WeldSettings defaultSettings = {2, 35, 100, 50};
 WeldSettings currentSettings = {0, 0, 0, 0};
 
 bool operator==(const WeldSettings &lhs, const WeldSettings &rhs)
@@ -23,15 +23,15 @@ SettingsService::SettingsService()
 {
   EepromSettings = nullptr;
   WeldSettings getTmp;
-  EEPROM.get(settingsAddr, getTmp);
-  if(defaultSettings == getTmp)
-  {
-    defaultSettings = getTmp;
-  }
-  else
-  {
-    EEPROM.put(settingsAddr, defaultSettings); // put default if no settings found
-  }
+  // EEPROM.get(settingsAddr, getTmp);
+  // if(defaultSettings == getTmp)
+  // {
+  //   defaultSettings = getTmp;
+  // }
+  // else
+  // {
+  //   EEPROM.put(settingsAddr, defaultSettings); // put default if no settings found
+  // }
 
   currentSettings = defaultSettings;
   EepromSettings = &currentSettings;

@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <Wire.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -79,7 +80,8 @@ void setup()
 
 void loop()
 {
-  OCR1A = 625 * settingsService.EepromSettings->pulsePower / 100;
+   OCR1A = 625 * settingsService.EepromSettings->pulsePower / 100;
+  //OCR1A = 625 * 50 / 100;
   int menuButton = analogRead(A0);
   int weldButton = digitalRead(WELDBUTTONPIN);
   unsigned long curMillis = millis();
