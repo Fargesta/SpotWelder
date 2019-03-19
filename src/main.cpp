@@ -81,10 +81,11 @@ void loop()
         }
       }
     }
-    else if(weldButton == LOW)
+    else if(weldButton == HIGH)
     {
       isWelding = false;
     }
+
   }
   else
   {

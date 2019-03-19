@@ -1,7 +1,6 @@
 #pragma once
 
 #include "SettingsService.h"
-#include "SettingsModel.h"
 #include <LiquidCrystal_I2C.h>
 
 enum MenuOptions
