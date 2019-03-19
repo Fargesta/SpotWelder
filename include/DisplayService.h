@@ -4,6 +4,14 @@
 #include "SettingsModel.h"
 #include <LiquidCrystal_I2C.h>
 
+enum MenuOptions
+{
+  None,
+  Save,
+  Clear,
+  Reset
+};
+
 class DisplayService : public LiquidCrystal_I2C
 {
   WeldSettings *eepromSettings;

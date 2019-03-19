@@ -2,5 +2,6 @@
 
 struct WeldSettings 
 {
-  int pulseCount, pulseDuration, pulseInterval, pulsePower;
+  int pulseCount, pulseDuration, pulseInterval;
+  bool isSaved;
 };

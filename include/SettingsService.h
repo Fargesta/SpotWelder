@@ -6,9 +6,15 @@
 
 class SettingsService
 {
+  static WeldSettings defaultSettings;
+  static WeldSettings currentSettings;
+  static WeldSettings eepromSettings;
+
   public:
     SettingsService();
     
     WeldSettings *EepromSettings;
-    void SaveSettings();
+    static void SaveSettings();
+    static void ResetToDefault();
+    static void Clear();
 };
