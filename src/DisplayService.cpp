@@ -65,6 +65,7 @@ void DisplayService::LoadSettings(WeldSettings *settings)
    //Show menu
   
   LiquidCrystal_I2C::clear();
+  LiquidCrystal_I2C::home();
   LiquidCrystal_I2C::print("Count    ");
   LiquidCrystal_I2C::print(eepromSettings->pulseCount);
   
@@ -78,8 +79,8 @@ void DisplayService::LoadSettings(WeldSettings *settings)
   LiquidCrystal_I2C::print(eepromSettings->pulseInterval);
   LiquidCrystal_I2C::print("ms");
   
-  LiquidCrystal_I2C::setCursor(1,3);
-  LiquidCrystal_I2C::print(" Reset  Clear  Save ");
+  LiquidCrystal_I2C::setCursor(0,3);
+  LiquidCrystal_I2C::print(" Reset Clear Save ");
 }
 
 void DisplayService::ButtonCenter()
@@ -125,7 +126,10 @@ void DisplayService::ButtonDown()
   LiquidCrystal_I2C::print("     ");      
   settingIndex > 2 ? settingIndex = 0 : settingIndex++;
   LiquidCrystal_I2C::setCursor(settingsArrowColumn, settingIndex);
-  LiquidCrystal_I2C::print("<<<<<");
+  if(settingIndex != 3)
+  {
+    LiquidCrystal_I2C::print("<<<<<");
+  }
 }
 
 void DisplayService::ButtonRight()
@@ -161,22 +165,22 @@ void DisplayService::ButtonRight()
     if(menuOption == None)
     {
       LiquidCrystal_I2C::setCursor(3, settingIndex);
-      LiquidCrystal_I2C::print(">Reset< Clear  Save ");
+      LiquidCrystal_I2C::print(">Reset<Clear Save ");
       menuOption = Reset;
     } else if(menuOption == Reset)
     {
       LiquidCrystal_I2C::setCursor(3, settingIndex);
-      LiquidCrystal_I2C::print(" Reset >Clear< Save ");
+      LiquidCrystal_I2C::print(" Reset>Clear<Save ");
       menuOption = Clear;
     } else if(menuOption == Clear)
     {
       LiquidCrystal_I2C::setCursor(3, settingIndex);
-      LiquidCrystal_I2C::print(" Reset  Clear >Save<");
+      LiquidCrystal_I2C::print(" Reset Clear>Save<");
       menuOption = Save;
     }else
     {
       LiquidCrystal_I2C::setCursor(3, settingIndex);
-      LiquidCrystal_I2C::print(" Reset  Clear  Save ");
+      LiquidCrystal_I2C::print(" Reset Clear Save ");
       menuOption = None;
     }
   }

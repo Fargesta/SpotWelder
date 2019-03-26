@@ -66,7 +66,6 @@ void loop()
         digitalWrite(RELAYBUTTONPIN, HIGH);
         if(diff > settingsService.EepromSettings->pulseDuration)
         {
-          Serial.println("Welding");
           digitalWrite(RELAYBUTTONPIN, LOW);
           curPulse++;
           isInterval = true;
