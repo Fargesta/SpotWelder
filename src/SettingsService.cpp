@@ -1,8 +1,9 @@
 #include "SettingsService.h"
+#include "SettingsModel.h"
 #include <EEPROM.h>
 
 const int settingsAddr = 0; // EEPROM memory adderss
-WeldSettings SettingsService::defaultSettings = {false, 2, 35, 100};
+WeldSettings SettingsService::defaultSettings = {2, 35, 100, false};
 WeldSettings SettingsService::currentSettings;
 WeldSettings SettingsService::eepromSettings;
 
@@ -29,10 +30,13 @@ SettingsService::SettingsService()
 
   if(eepromSettings.isSaved)
   {
-    defaultSettings = eepromSettings;
+    currentSettings = eepromSettings;
   }
-
-  currentSettings = defaultSettings;
+  else
+  {
+    currentSettings = defaultSettings;
+  }
+  
   EepromSettings = &currentSettings;
 }
 

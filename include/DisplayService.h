@@ -20,6 +20,7 @@ class DisplayService : public LiquidCrystal_I2C
   void ButtonRight();
   void ButtonUp();
   void ButtonDown();
+  void ShowMenu();
 
   public:
     DisplayService() : LiquidCrystal_I2C (0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE) { eepromSettings = nullptr; }
@@ -27,5 +28,4 @@ class DisplayService : public LiquidCrystal_I2C
     void OnPress(int value);
     void ConfigureButtons();
     void LoadSettings(WeldSettings *settings);
-    ~DisplayService();
 };
